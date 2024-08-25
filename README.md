@@ -1,3 +1,11 @@
+# m1n1 with support for A7 - A11 SoCs
+
+### Warning about the DWC2 driver
+
+The dwc2 USB code is very sloppy, do not count on it working.
+
+----
+
 # m1n1: an experimentation playground for Apple Silicon
 
 (And to some extent a Linux bootloader)
