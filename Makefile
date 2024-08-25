@@ -150,7 +150,7 @@ OBJECTS := \
 	tps6598x.o \
 	uart.o \
 	uartproxy.o \
-	usb.o usb_dwc3.o \
+	usb.o usb_dwc3.o usb_dwc2.o \
 	utils.o utils_asm.o \
 	vsprintf.o \
 	wdt.o \
@@ -263,6 +263,7 @@ build/%.bin: font/%.bin
 
 build/main.o: build/build_tag.h build/build_cfg.h src/main.c
 build/usb_dwc3.o: build/build_tag.h src/usb_dwc3.c
+build/usb_dwc2.o: build/build_tag.h src/usb_dwc2.c
 build/chainload.o: build/build_cfg.h src/usb_dwc3.c
 
 -include $(DEPDIR)/*
