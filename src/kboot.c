@@ -2473,7 +2473,8 @@ int kboot_boot(void *kernel)
     tunables_apply_static();
     clk_init();
 
-    usb_init();
+    if (is_mac)
+        usb_init();
     pcie_init();
     dapf_init_all();
 
