@@ -1481,8 +1481,9 @@ class HV(Reloadable):
         hook_devs = ["UART0", atc, atc_aon]
 
         pmgr = self.adt["/arm-io/pmgr"]
+        self.adt.pmgr_init()
         dev_by_name = {dev.name: dev for dev in pmgr.devices}
-        dev_by_id = {dev.id: dev for dev in pmgr.devices}
+        dev_by_id = {dev.id2: dev for dev in pmgr.devices}
 
         pmgr_hooks = []
 
@@ -1491,7 +1492,7 @@ class HV(Reloadable):
             if dev.psidx or dev.psreg:
                 addr = pmgr.get_reg(ps.reg)[0] + ps.offset + dev.psidx * 8
                 pmgr_hooks.append(addr)
-                for idx in dev.parents:
+                for idx in self.adt.pmgr_dev_get_parents(dev):
                     if idx in dev_by_id:
                         hook_pmgr_dev(dev_by_id[idx])
 
