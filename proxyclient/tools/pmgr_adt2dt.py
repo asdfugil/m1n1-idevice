@@ -79,13 +79,14 @@ for i, ((base, size), devices) in enumerate(sorted(blocks.items())):
         print(f"\t\treg = <{offset:#x} 4>;")
         print( "\t\t#power-domain-cells = <0>;")
         print( "\t\t#reset-cells = <0>;")
-        print(f'\t\tlabel = {die_label(dev.name.lower())};')
+        print(f'\t\tlabel = "{die_label(dev.name.lower())}";')
         if dev.flags.critical:
             print("\t\tapple,always-on;")
 
         if any(dev.parents):
-            domains = [f"<&{die_node('ps_'+dev_by_id[idx].name.lower())}>" for idx in dev.parents if idx]
-            print(f"\t\tpower-domains = {', '.join(domains)};")
+            domains = [f"<&{die_node('ps_'+dev_by_id[idx].name.lower())}>" for idx in dev.parents if idx and len(dev_by_id) > idx]
+            if len(domains) > 0:
+                print(f"\t\tpower-domains = {', '.join(domains)};")
 
         print( "\t};")
     print( "};")
