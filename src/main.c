@@ -50,7 +50,7 @@ void get_device_info(void)
     if (target)
         printf("  Target: %s\n", target);
 
-    is_mac = !!strstr(model, "Mac");
+    is_mac = !!strstr(model, "Mac") || strncmp(model, "ADP3,", 5) == 0;
     has_dcp = adt_path_offset(adt, "/arm-io/dcp") > 0;
 
     int chosen = adt_path_offset(adt, "/chosen");
