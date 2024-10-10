@@ -56,6 +56,8 @@ void init_t8011_hurricane_zephyr(void);
 void init_t8015_monsoon(void);
 void init_t8015_mistral(void);
 void init_t8015_monsoon(void);
+void init_common_vortex(void);
+void init_common_tempset(void);
 void init_m1_icestorm(void);
 void init_t8103_firestorm(int rev);
 void init_t6000_firestorm(int rev);
@@ -142,6 +144,16 @@ const char *init_cpu(void)
         case MIDR_PART_T8015_MISTRAL:
             cpu = "A11 Mistral";
             init_t8015_mistral();
+            break;
+
+        case MIDR_PART_T8027_VORTEX:
+            cpu = "A12X/Z Vortex";
+            init_common_vortex();
+            break;
+
+        case MIDR_PART_T8027_TEMPSET:
+            cpu = "A12X/Z Tempset";
+            init_common_tempset();
             break;
 
         case MIDR_PART_T8103_FIRESTORM:
