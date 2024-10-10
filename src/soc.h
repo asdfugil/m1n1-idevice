@@ -16,6 +16,7 @@
 #define T8012    0x8012
 #define T8015    0x8015
 
+#define T8027 0x8027
 #define T8103 0x8103
 #define T8112 0x8112
 #define T8122 0x8122
@@ -35,7 +36,7 @@
 #elif TARGET == T6000 || TARGET == T6001 || TARGET == T6002 || TARGET == T6020 ||                  \
     TARGET == T6021 || TARGET == T6022
 #define EARLY_UART_BASE 0x39b200000
-#elif TARGET == T8112
+#elif TARGET == T8027 || TARGET == T8112
 #define EARLY_UART_BASE 0x235200000
 #elif TARGET == T6034 || TARGET == T6031
 #define EARLY_UART_BASE 0x391200000
