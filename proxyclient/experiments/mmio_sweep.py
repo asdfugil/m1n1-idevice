@@ -95,8 +95,10 @@ else:
 	maskrange = range(0x2_2000_0000, 0x3_0000_0000)
 
 pd_did_enable = set()
-pmgr = u.adt["/arm-io/pmgr"]
-ps_dev_by_id = {dev.id: dev for dev in pmgr.devices}
+dt = u.adt["/arm-io/pmgr"]
+dt.pmgr_init()
+pmgr = dt["/arm-io/pmgr"]
+ps_dev_by_id = {dt.pmgr_dev_get_id(dev): dev for dev in pmgr.devices}
 ps_deps = dict()
 ps_addrs = dict()
 
@@ -105,12 +107,12 @@ for dev in pmgr.devices:
 	addr = pmgr.get_reg(ps.reg)[0] + ps.offset + dev.psidx * 8
 
 	if lp.is_t6000() and dev.name.startswith("AOP_"):
-		addr = 0x292284000 + (dev.id - 403) * 8		
+		addr = 0x292284000 + (dt.pmgr_dev_get_id(dev) - 403) * 8		
 
 	ps_addrs[dev.name] = addr
 	ps_deps[dev.name] = [
 		ps_dev_by_id[idx].name for idx
-		in dev.parents if idx in ps_dev_by_id
+		in dt.pmgr_dev_get_parents(dev) if idx in ps_dev_by_id
 	]
 
 if lp.is_t6000():

@@ -15,10 +15,11 @@ args = parser.parse_args()
 
 adt_data = args.input.read_bytes()
 dt = adt.load_adt(adt_data)
+dt.pmgr_init()
 
 pmgr = dt["/arm-io/pmgr"]
 
-dev_by_id = {dev.id: dev for dev in pmgr.devices}
+dev_by_id = {dt.pmgr_dev_get_id(dev): dev for dev in pmgr.devices}
 
 blocks = {}
 maxaddr = {}
@@ -83,8 +84,9 @@ for i, ((base, size), devices) in enumerate(sorted(blocks.items())):
         if dev.flags.critical:
             print("\t\tapple,always-on;")
 
-        if any(dev.parents):
-            domains = [f"<&{die_node('ps_'+dev_by_id[idx].name.lower())}>" for idx in dev.parents if idx and len(dev_by_id) > idx]
+        parents = dt.pmgr_dev_get_parents(dev)
+        if any(parents):
+            domains = [f"<&{die_node('ps_'+dev_by_id[idx].name.lower())}>" for idx in parents if idx and len(dev_by_id) > idx]
             if len(domains) > 0:
                 print(f"\t\tpower-domains = {', '.join(domains)};")
 
