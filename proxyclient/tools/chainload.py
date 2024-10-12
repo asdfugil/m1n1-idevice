@@ -72,15 +72,15 @@ if not args.no_sepfw:
         p.memcpy8(image_addr + preoslog_off, preoslog_start, preoslog_size)
         u.adt["chosen"]["memory-map"].preoslog = (new_base + preoslog_off, preoslog_size)
 
-for name in ("mtp", "aop"):
-    if name in u.adt["/arm-io"]:
-        iop = u.adt[f"/arm-io/{name}"]
-        nub = u.adt[f"/arm-io/{name}/iop-{name}-nub"]
-        if iop.segment_names.endswith(";__OS_LOG"):
-            iop.segment_names = iop.segment_names[:-9]
-            nub.segment_names = nub.segment_names[:-9]
-            iop.segment_ranges = iop.segment_ranges[:-32]
-            nub.segment_ranges = nub.segment_ranges[:-32]
+#for name in ("mtp", "aop"):
+#    if name in u.adt["/arm-io"]:
+#        iop = u.adt[f"/arm-io/{name}"]
+#        nub = u.adt[f"/arm-io/{name}/iop-{name}-nub"]
+#        if iop.segment_names.endswith(";__OS_LOG"):
+#            iop.segment_names = iop.segment_names[:-9]
+#            nub.segment_names = nub.segment_names[:-9]
+#            iop.segment_ranges = iop.segment_ranges[:-32]
+#            nub.segment_ranges = nub.segment_ranges[:-32]
 
 print("Setting secondary CPU RVBARs...")
 
