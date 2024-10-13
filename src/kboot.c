@@ -826,8 +826,13 @@ static int dt_set_wifi(void)
     }
 
     uint8_t info[16];
-    if (ADT_GETPROP_ARRAY(adt, anode, "wifi-antenna-sku-info", info) < 0)
+    if (ADT_GETPROP_ARRAY(adt, anode, "wifi-antenna-sku-info", info) < 0) {
+        // DTK is weird, it is only one model anyways, maybe not needed
+        if (chip_id == T8027)
+            return 0;
+
         bail("ADT: Failed to get wifi-antenna-sku-info\n");
+    }
 
     const char *path = fdt_get_alias(dt, "wifi0");
     if (path == NULL)
