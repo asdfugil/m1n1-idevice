@@ -148,6 +148,16 @@ void cpufreq_fixup_cluster(const struct cluster_t *cluster)
     }
 }
 
+static const struct cluster_t s8000_clusters[] = {
+    {"CPU", 0x202200000, false, 2, 7},
+    {},
+};
+
+static const struct cluster_t t8010_clusters[] = {
+    {"CPU", 0x202f00000, false, 2, 4},
+    {},
+};
+
 static const struct cluster_t t8103_clusters[] = {
     {"ECPU", 0x210e00000, false, 1, 5},
     {"PCPU", 0x211e00000, true, 1, 7},
@@ -197,6 +207,10 @@ static const struct cluster_t t6022_clusters[] = {
 const struct cluster_t *cpufreq_get_clusters(void)
 {
     switch (chip_id) {
+        case S8000 ... S8003:
+            return s8000_clusters;
+        case T8010 ... T8012:
+            return t8010_clusters;
         case T8103:
             return t8103_clusters;
         case T6000:
@@ -216,6 +230,11 @@ const struct cluster_t *cpufreq_get_clusters(void)
             return NULL;
     }
 }
+
+static const struct feat_t s8000_features[] = {
+    {"cpu-apsc", CLUSTER_PSTATE, CLUSTER_PSTATE_M1_APSC_DIS, 0, CLUSTER_PSTATE_APSC_BUSY, false},
+    {},
+};
 
 static const struct feat_t t8103_features[] = {
     {"cpu-apsc", CLUSTER_PSTATE, CLUSTER_PSTATE_M1_APSC_DIS, 0, CLUSTER_PSTATE_APSC_BUSY, false},
@@ -253,6 +272,8 @@ static const struct feat_t t6020_features[] = {
 const struct feat_t *cpufreq_get_features(void)
 {
     switch (chip_id) {
+        case S8000 ... T8012:
+            return s8000_features;
         case T8103:
         case T6000 ... T6002:
             return t8103_features;
