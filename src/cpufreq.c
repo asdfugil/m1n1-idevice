@@ -94,6 +94,14 @@ int cpufreq_init_cluster(const struct cluster_t *cluster, const struct feat_t *f
     /* Initialize APSC */
     set64(cluster->base + 0x200f8, BIT(40));
     switch (chip_id) {
+        case S8000 ... T8012: {
+            u64 lo = read64(cluster->base + 0x23000 + cluster->apsc_pstate * 0x20);
+            u64 hi = read64(cluster->base + 0x23008 + cluster->apsc_pstate * 0x20);
+            write64(cluster->base + 0x231e0, lo);
+            write64(cluster->base + 0x231e8, hi);
+            break;
+        }
+
         case T8103: {
             u64 lo = read64(cluster->base + 0x70000 + cluster->apsc_pstate * 0x20);
             u64 hi = read64(cluster->base + 0x70008 + cluster->apsc_pstate * 0x20);
@@ -149,12 +157,12 @@ void cpufreq_fixup_cluster(const struct cluster_t *cluster)
 }
 
 static const struct cluster_t s8000_clusters[] = {
-    {"CPU", 0x202200000, false, 2, 7},
+    {"CPU", 0x202200000, true, 2, 7},
     {},
 };
 
 static const struct cluster_t t8010_clusters[] = {
-    {"CPU", 0x202f00000, false, 2, 4},
+    {"CPU", 0x202f00000, true, 2, 4},
     {},
 };
 
