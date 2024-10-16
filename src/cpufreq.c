@@ -183,7 +183,7 @@ void cpufreq_fixup_cluster(const struct cluster_t *cluster)
 }
 
 static const struct cluster_t s5l8960x_clusters[] = {
-    {"CPU", 0x202200000, true, 2, 4},
+    {"CPU", 0x202200000, true, 2, 3},
     {},
 };
 
