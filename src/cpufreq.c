@@ -20,6 +20,10 @@
 #define CLUSTER_PSTATE_APSC_BUSY              BIT(7)
 #define CLUSTER_PSTATE_DESIRED1               GENMASK(4, 0)
 
+#define S5L8960X_PSTATE_CFG         0x20040
+#define S5L8960X_PSTATE_CFG_DISABLE BIT(2)
+#define S5L8960X_PSTATE_DESIRED     GENMASK(24, 22)
+
 #define CLUSTER_SWITCH_TIMEOUT 100
 
 struct cluster_t {
@@ -43,19 +47,30 @@ static int set_pstate(const struct cluster_t *cluster, uint32_t pstate)
 {
     u64 val = read64(cluster->base + CLUSTER_PSTATE);
 
-    if (FIELD_GET(CLUSTER_PSTATE_DESIRED1, val) != pstate) {
+    if (chip_id == S5L8960X || chip_id == T7000 || chip_id == T7001) {
+        if (FIELD_GET(S5L8960X_PSTATE_DESIRED, val) == pstate)
+            return 0;
+
+        val &= ~S5L8960X_PSTATE_DESIRED;
+        val |= CLUSTER_PSTATE_SET | FIELD_PREP(S5L8960X_PSTATE_DESIRED, pstate);
+    } else {
+        if (FIELD_GET(CLUSTER_PSTATE_DESIRED1, val) == pstate)
+            return 0;
+
         val &= ~CLUSTER_PSTATE_DESIRED1;
         val |= CLUSTER_PSTATE_SET | FIELD_PREP(CLUSTER_PSTATE_DESIRED1, pstate);
-        if (chip_id == T8103 || chip_id <= T6002) {
-            val &= ~CLUSTER_PSTATE_DESIRED2;
-            val |= CLUSTER_PSTATE_SET | FIELD_PREP(CLUSTER_PSTATE_DESIRED2, pstate);
-        }
-        write64(cluster->base + CLUSTER_PSTATE, val);
-        if (poll32(cluster->base + CLUSTER_PSTATE, CLUSTER_PSTATE_BUSY, 0, CLUSTER_SWITCH_TIMEOUT) <
+    }
+
+    if (chip_id == T8103 || chip_id <= T6002) {
+        val &= ~CLUSTER_PSTATE_DESIRED2;
+        val |= CLUSTER_PSTATE_SET | FIELD_PREP(CLUSTER_PSTATE_DESIRED2, pstate);
+    }
+
+    write64(cluster->base + CLUSTER_PSTATE, val);
+    if (poll32(cluster->base + CLUSTER_PSTATE, CLUSTER_PSTATE_BUSY, 0, CLUSTER_SWITCH_TIMEOUT) <
             0) {
-            printf("cpufreq: Timed out waiting for cluster %s P-State switch\n", cluster->name);
-            return -1;
-        }
+        printf("cpufreq: Timed out waiting for cluster %s P-State switch\n", cluster->name);
+        return -1;
     }
 
     return 0;
@@ -88,12 +103,23 @@ int cpufreq_init_cluster(const struct cluster_t *cluster, const struct feat_t *f
         }
     }
 
-    /* Unknown */
-    write64(cluster->base + 0x440f8, 1);
+    if (chip_id != S5L8960X && chip_id != T7000 && chip_id != T7001) {
+        /* Unknown */
+        write64(cluster->base + 0x440f8, 1);
 
-    /* Initialize APSC */
-    set64(cluster->base + 0x200f8, BIT(40));
+        /* Initialize APSC */
+        set64(cluster->base + 0x200f8, BIT(40));
+    }
+
     switch (chip_id) {
+        case S5L8960X:
+        case T7000:
+        case T7001: {
+            /* Enable voltage controls */
+            mask32(cluster->base + S5L8960X_PSTATE_CFG, S5L8960X_PSTATE_CFG_DISABLE, 0);
+            break;
+        }
+
         case S8000 ... T8012: {
             u64 lo = read64(cluster->base + 0x23000 + cluster->apsc_pstate * 0x20);
             u64 hi = read64(cluster->base + 0x23008 + cluster->apsc_pstate * 0x20);
@@ -156,6 +182,11 @@ void cpufreq_fixup_cluster(const struct cluster_t *cluster)
     }
 }
 
+static const struct cluster_t s5l8960x_clusters[] = {
+    {"CPU", 0x202200000, true, 2, 4},
+    {},
+};
+
 static const struct cluster_t s8000_clusters[] = {
     {"CPU", 0x202200000, true, 2, 7},
     {},
@@ -215,6 +246,10 @@ static const struct cluster_t t6022_clusters[] = {
 const struct cluster_t *cpufreq_get_clusters(void)
 {
     switch (chip_id) {
+        case S5L8960X:
+        case T7000:
+        case T7001:
+            return s5l8960x_clusters;
         case S8000 ... S8003:
             return s8000_clusters;
         case T8010 ... T8012:
@@ -238,6 +273,10 @@ const struct cluster_t *cpufreq_get_clusters(void)
             return NULL;
     }
 }
+
+static const struct feat_t s5l8960x_features[] = {
+    {},
+};
 
 static const struct feat_t s8000_features[] = {
     {"cpu-apsc", CLUSTER_PSTATE, CLUSTER_PSTATE_M1_APSC_DIS, 0, CLUSTER_PSTATE_APSC_BUSY, false},
@@ -280,6 +319,10 @@ static const struct feat_t t6020_features[] = {
 const struct feat_t *cpufreq_get_features(void)
 {
     switch (chip_id) {
+        case S5L8960X:
+        case T7000:
+        case T7001:
+            return s5l8960x_features;
         case S8000 ... T8012:
             return s8000_features;
         case T8103:
