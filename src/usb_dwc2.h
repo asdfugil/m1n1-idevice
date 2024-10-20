@@ -32,4 +32,5 @@ static void usb_dwc2_ep_hw_send(dwc2_dev_t *dev, u8 ep, u32 hw_xfer_size, u32 pa
 static void usb_dwc2_ep_abort(dwc2_dev_t *dev, u8 ep);
 static int usb_dwc2_start_status_phase(dwc2_dev_t *dev, u8 ep);
 static void usb_dwc2_cdc_start_bulk_out_xfer(dwc2_dev_t *dev, u8 endpoint_number);
+static void usb_dwc2_cdc_start_bulk_in_xfer(dwc2_dev_t *dev, u8 endpoint_number);
 #endif
