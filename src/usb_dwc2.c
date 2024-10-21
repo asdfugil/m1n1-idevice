@@ -1522,10 +1522,6 @@ size_t usb_dwc2_write(dwc2_dev_t *dev, cdc_acm_dwc2_pipe_id_t pipe, const void *
     if (!dev)
         return -1;
     // usb_debug_printf("***dwc2_write,count=%u\n", count);
-    if (count == 31) {
-        while (1) {
-        }
-    }
     u8 ep = dev->pipe[pipe].ep_in;
     size_t ret = usb_dwc2_queue(dev, pipe, buf, count);
 
