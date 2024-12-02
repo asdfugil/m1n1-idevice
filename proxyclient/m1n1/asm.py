@@ -30,7 +30,7 @@ toolchain = os.environ.get("TOOLCHAIN", TOOLCHAIN)
 
 if use_clang:
     CC = toolchain + "clang --target=%ARCH"
-    LD = toolchain + "ld.lld"
+    LD = "/opt/homebrew/bin/ld.lld"
     OBJCOPY = toolchain + "llvm-objcopy"
     OBJDUMP = toolchain + "llvm-objdump"
     NM = toolchain + "llvm-nm"
