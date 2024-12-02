@@ -93,8 +93,8 @@ elif chip_id == 0x8011:
 
 elif chip_id == 0x8015:
     CREG = [
-        0x202e00000,
-        0x202e80000
+        0x208e00000,
+        0x208e80000
     ]
 
     MAX_PSTATE = [7, 8]
@@ -151,8 +151,8 @@ signal_and_write:
     add x2, x2, #0x800
 1:
     mrs x3, CNTPCT_EL0
-    sub x4, x3, x2
-    cbnz x4, 1b
+    cmp x3, x2
+    b.gt 1b
     str x1, [x0]
     mov x0, x3
     ret
