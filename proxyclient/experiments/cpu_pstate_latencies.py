@@ -35,6 +35,8 @@ elif chip_id == 0x7000:
 
     if u.adt.target_type == "N102":
         MAX_PSTATE = [5]
+    elif u.adt.target_type in ("J96", "J97"):
+        MAX_PSTATE = [7]
     else:
         MAX_PSTATE = [6]
 
