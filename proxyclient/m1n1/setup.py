@@ -26,8 +26,12 @@ hv = HV(iface, p, u)
 
 fb = u.ba.video.base
 
-PMU(u).reset_panic_counter()
+chip_id = u.adt["/chosen"].chip_id
+
+if chip_id not in (0x8960, 0x7000, 0x7001, 0x8000, 0x8001, 0x8003, 0x8010, 0x8012, 0x8015):
+	PMU(u).reset_panic_counter()
 
 print(f"m1n1 base: 0x{u.base:x}")
 
-PMU(u).reset_panic_counter()
+if chip_id not in (0x8960, 0x7000, 0x7001, 0x8000, 0x8001, 0x8003, 0x8010, 0x8012, 0x8015):
+	PMU(u).reset_panic_counter()
