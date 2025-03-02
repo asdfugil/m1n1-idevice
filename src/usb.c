@@ -332,6 +332,7 @@ int usb_complex_init(void)
             write32(USBComplexBase + USBX_CTL_T8011, USBX_CTL_EN_T8011);
             write32(USBComplexBase + USBX_USB2DEV_REMAP_CTL_T8011, USBX_REMAP_TO_DRAM_BITS_T8011);
             write32(USBComplexBase + USBX_EHCI_REMAP_CTL_T8011, USBX_REMAP_TO_DRAM_BITS_T8011);
+            write32(USBComplexBase + USBX_XHCI_REMAP_CTL_T8011, 0);
             break;
         case T8015:
             write32(USBComplexBase + USBX_CTL_T8011, USBX_CTL_EN_T8011);
