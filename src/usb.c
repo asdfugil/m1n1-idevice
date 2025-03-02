@@ -326,10 +326,12 @@ int usb_complex_init(void)
     }
 
     // Derived from ADT usb_widget, however that property is not usable as-is
+    // Enable EHCI remapping everywhere, because Linux can't do 64-bit EHCI
     switch (chip_id) {
         case T8011:
             write32(USBComplexBase + USBX_CTL_T8011, USBX_CTL_EN_T8011);
             write32(USBComplexBase + USBX_USB2DEV_REMAP_CTL_T8011, USBX_REMAP_TO_DRAM_BITS_T8011);
+            write32(USBComplexBase + USBX_EHCI_REMAP_CTL_T8011, USBX_REMAP_TO_DRAM_BITS_T8011);
             break;
         case T8015:
             write32(USBComplexBase + USBX_CTL_T8011, USBX_CTL_EN_T8011);
@@ -338,13 +340,11 @@ int usb_complex_init(void)
             write32(USBComplexBase + USBX_EHCI1_REMAP_CTL_T8015, USBX_REMAP_TO_DRAM_BITS_T8011);
             write32(USBComplexBase + USBX_USBDEV_REMAP_CTL_T8015, USBX_REMAP_TO_DRAM_BITS_T8011);
             break;
-        case S5L8960X:
-            write32(USBComplexBase + USBX_EHCI0_REMAP_CTL_S5L8960X,
-                    USBX_REMAP_TO_DRAM_BITS_S5L8960X);
-            write32(USBComplexBase + USBX_EHCI1_REMAP_CTL_S5L8960X,
-                    USBX_REMAP_TO_DRAM_BITS_S5L8960X);
-            /* fallthrough */
         default:
+            write32(USBComplexBase + USBX_EHCI0_REMAP_CTL_S5L8960X,
+                USBX_REMAP_TO_DRAM_BITS_S5L8960X);
+            write32(USBComplexBase + USBX_EHCI1_REMAP_CTL_S5L8960X,
+                USBX_REMAP_TO_DRAM_BITS_S5L8960X);
             write32(USBComplexBase + USBX_USBDEV_REMAP_CTL_S5L8960X,
                     USBX_REMAP_TO_DRAM_BITS_S5L8960X);
             write32(USBComplexBase + USBX_OHCI0_REMAP_CTL_S5L8960X,
