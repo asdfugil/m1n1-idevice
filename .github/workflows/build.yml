@@ -40,4 +40,6 @@ jobs:
           name: m1n1
           path: |
             build/m1n1.macho
+            build/m1n1-idevice.macho
+            build/monitor-stub.macho
             build/m1n1.bin
