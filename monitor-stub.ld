@@ -77,6 +77,37 @@ SECTIONS {
     } :text
     _text_size = . - _text_start;
 
+    .rela.dyn : {
+        _rela_start = .;
+        *(.rela)
+        *(.rela.text)
+        *(.rela.got)
+        *(.rela.plt)
+        *(.rela.bss)
+        *(.rela.ifunc)
+        *(.rela.text.*)
+        *(.rela.data)
+        *(.rela.data.*)
+        *(.rela.rodata)
+        *(.rela.rodata*)
+        *(.rela.dyn)
+        _rela_end = .;
+        . = ALIGN(0x4000);
+    } :rodata
+
+    .data : ALIGN(0x4000) {
+        *(.got)
+    } :data
+
+    .bss : ALIGN(0x4000) {
+        _bss_start = .;
+        *(.bss)
+        *(.bss.*)
+        *(.dynbss)
+        *(COMMON)
+        . = ALIGN(0x4000);
+    } :data
+
     .symtab 0 : { *(.symtab) }
     .strtab 0 : { *(.strtab) }
     .shstrtab 0 : { *(.shstrtab) }
